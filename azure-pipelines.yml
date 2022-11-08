@@ -45,6 +45,6 @@ stages:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az deployment group create  `
-                --resource-group $(resourceGroupName) `
+                --resource-group $(RESOURCEGROUPNAME) `
                 --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep `
                 --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json

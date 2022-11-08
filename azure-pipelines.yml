@@ -9,9 +9,9 @@ name: Bicep-sqsandbox
 # - main
 
 variables:
-  resourceGroupName: $(RESOURCEGROUPNAME)
-  location: $(LOCATION)
-  azureSubscription: $(SERVICEPRINCIPAL)
+  resourceGroupName: $(resourceGroupName)
+  location: $(location)
+  azureSubscription: $(servicePrincipal)
 
 pool:
   vmImage: ubuntu-latest

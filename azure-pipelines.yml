@@ -1,0 +1,55 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+name: Bicep-sqsandbox
+
+# trigger:
+# - main
+
+variables:
+  resourceGroupName: $(RESOURCEGROUPNAME)
+  location: $(LOCATION)
+  azureSubscription: $(AZURESUBSCRIPTION)
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript' 
+        inlineScript: 'az bicep build --file sqsandbox_main.bicep' 
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/sqsandbox_main.json'
+        ArtifactName: 'finishedTemplate'
+        publishLocation: 'Container'
+- stage: deploy
+  jobs:
+  - deployment: biceptoAzure
+    displayName: 'Deploy bicep to Azure'
+    environment: 'AzureDeployment'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: AzureCLI@2
+            displayName: 'deploy bicep template'
+            inputs:
+              azureSubscription: $(azureSubscription) 
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment group create  `
+                --resource-group $(ResourceGroupName) `
+                --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep `
+                --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json

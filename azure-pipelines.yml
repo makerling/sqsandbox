@@ -23,10 +23,10 @@ stages:
     steps:
     - task: AzureCLI@2
       inputs:
-        azureSubscription: $(SERVICEPRINCIPAL)
+        azureSubscription: '$(SERVICEPRINCIPAL)'
         scriptType: 'bash'
-        scriptLocation: 'inlineScript' 
-        inlineScript: 'az bicep build --file sqsandbox_main.bicep' 
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az bicep build --file sqsandbox_main.bicep'
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)/sqsandbox_main.json'

@@ -44,7 +44,8 @@ stages:
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
+                vars="$(RESOURCEGROUPNAME)"
                 az deployment group create  `
-                --resource-group $(RESOURCEGROUPNAME) `
+                --resource-group $vars `
                 --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep `
                 --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json

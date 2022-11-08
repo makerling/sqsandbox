@@ -8,11 +8,6 @@ name: Bicep-sqsandbox
 # trigger:
 # - main
 
-variables:
-  resourceGroupName: $(resourceGroupName)
-  location: $(location)
-  azureSubscription: $(servicePrincipal)
-
 pool:
   vmImage: ubuntu-latest
 
@@ -23,7 +18,7 @@ stages:
     steps:
     - task: AzureCLI@2
       inputs:
-        azureSubscription: $(azureSubscription) 
+        azureSubscription: $(servicePrincipal)
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: 'az bicep build --file sqsandbox_main.bicep'
@@ -45,11 +40,11 @@ stages:
           - task: AzureCLI@2
             displayName: 'deploy bicep template'
             inputs:
-              azureSubscription: $(azureSubscription) 
+              azureSubscription: $(servicePrincipal) 
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az deployment group create  `
-                --resource-group $(ResourceGroupName) `
+                --resource-group $(resourceGroupName) `
                 --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep `
                 --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json

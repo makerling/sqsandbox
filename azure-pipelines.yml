@@ -23,7 +23,7 @@ stages:
     steps:
     - task: AzureCLI@2
       inputs:
-        azureSubscription: $(azureSubscription)
+        azureSubscription: $(SERVICEPRINCIPAL)
         scriptType: 'bash'
         scriptLocation: 'inlineScript' 
         inlineScript: 'az bicep build --file sqsandbox_main.bicep' 

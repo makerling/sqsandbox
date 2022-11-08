@@ -43,14 +43,10 @@ stages:
               azureSubscription: $(servicePrincipal) 
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
-              inlineScript: |
-                vars="$(RESOURCEGROUPNAME)"
-                vars2=$(RESOURCEGROUPNAME)
-                # az deployment group create  `
-                # --resource-group $vars `
-                # --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep `
-                # --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json
-                echo $vars
-                echo $vars2
-                echo $(RESOURCEGROUPNAME)
-                echo $(resourceGroupName)
+              inlineScript: 'az deployment group create --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json'
+                # vars="$(RESOURCEGROUPNAME)"
+                # vars2=$(RESOURCEGROUPNAME)
+                # echo $vars
+                # echo $vars2
+                # echo $(RESOURCEGROUPNAME)
+                # echo $(resourceGroupName)

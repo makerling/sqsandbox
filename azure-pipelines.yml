@@ -44,8 +44,8 @@ stages:
               resourceGroupName: $(resourceGroupName)
               location: $(location)
               templateLocation: 'Linked artifact' 
-              csmFile: $(Build.SourcesDirectory)/sqsandbox_main.json
-              csmParametersFile: $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json
+              csmFile: '$(Build.SourcesDirectory)/sqsandbox_main.json'
+              csmParametersFile: '$(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json'
               overrideParameters: '-virtualNetworkName $(virtualNetworkName) -location $(location) -user $(user) -team $(team) -project $(project) -ipaddress $(ipaddress)'
               deploymentMode: 'Complete' 
             

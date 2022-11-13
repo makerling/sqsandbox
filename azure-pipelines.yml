@@ -37,13 +37,25 @@ stages:
         deploy:
           steps:
           - checkout: self
-          - task: AzureCLI@2
-            displayName: 'deploy bicep template'
+          - task: AzureResourceGroupDeployment@2
             inputs:
               azureSubscription: $(servicePrincipal) 
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: 'az deployment group create --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json'
+              action: 'Create Or Update Resource Group' 
+              resourceGroupName: $(resourceGroupName)
+              location: $(location)
+              templateLocation: 'Linked artifact' 
+              csmFile: $(Build.SourcesDirectory)/sqsandbox_main.json
+              csmParametersFile: $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json
+              overrideParameters: '-virtualNetworkName $(virtualNetworkName) -location $(location) -user $(user) -team $(team) -project $(project) -ipaddress $(ipaddress)'
+              deploymentMode: 'Complete' 
+            
+          # - task: AzureCLI@2
+          #   displayName: 'deploy bicep template'
+          #   inputs:
+          #     azureSubscription: $(servicePrincipal) 
+          #     scriptType: 'bash'
+          #     scriptLocation: 'inlineScript'
+          #     inlineScript: 'az deployment group create --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json'
                 # vars="$(RESOURCEGROUPNAME)"
                 # vars2=$(RESOURCEGROUPNAME)
                 # echo $vars

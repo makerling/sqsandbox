@@ -104,8 +104,13 @@ stages:
                 echo $(System.TeamProjectId)
                 echo $(System.WorkFolder)
                 echo $(Task.DisplayName)
-
+                pwd
                 ls -lah
+                echo 'testing location of template'
+                ls -lah /home/vsts/work/1/finishedTemplate/sqsandbox_main.json
+                echo 'testing variable Agent.BuildDirectory'
+                ls -lah $(Agent.BuildDirectory)
+                ls -lah $(Agent.BuildDirectory)/finishedTemplate
               # inlineScript: 'az deployment group create --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json'
                 # vars="$(RESOURCEGROUPNAME)"
                 # vars2=$(RESOURCEGROUPNAME)

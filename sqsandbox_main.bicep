@@ -6,7 +6,7 @@ param project string
 param ipaddress string
 
 module stgModule './sqsandbox_vnet.bicep' = {
-  name: 'vnet deploy'
+  name: 'vnetdeploy'
   params: {
     location: location
     virtualNetworkName: virtualNetworkName

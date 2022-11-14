@@ -1,0 +1,120 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+name: Bicep-sqsandbox
+
+# trigger:
+# - main
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(servicePrincipal)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az bicep build --file sqsandbox_main.bicep'
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)/sqsandbox_main.json'
+        ArtifactName: 'finishedTemplate'
+        publishLocation: 'Container'
+- stage: deploy
+  jobs:
+  - deployment: biceptoAzure
+    displayName: 'Deploy bicep to Azure'
+    environment: 'AzureDeployment'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: AzureResourceManagerTemplateDeployment@3
+            inputs:
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: $(servicePrincipal) 
+              subscriptionId: $(azureSubscription)
+              resourceGroupName: $(resourceGroupName)
+              location: $(location)
+              templateLocation: 'Linked artifact' 
+              csmFile: '$(Agent.BuildDirectory)/finishedTemplate/sqsandbox_main.json'
+              csmParametersFile: './sqsandbox_vnet.parameters.json'
+              overrideParameters: '-virtualNetworkName $(virtualNetworkName) -location $(location) -user $(user) -team $(team) -project $(project) -ipaddress $(ipaddress)'
+              deploymentMode: 'Complete' 
+            
+          # - task: AzureCLI@2
+          #   displayName: 'deploy bicep template'
+          #   inputs:
+          #     azureSubscription: $(servicePrincipal) 
+          #     scriptType: 'bash'
+          #     scriptLocation: 'inlineScript'
+          #     inlineScript: |
+          #       echo $(Agent.AcceptTeeEula)
+          #       echo $(Agent.BuildDirectory)
+          #       echo $(Agent.HomeDirectory)
+          #       echo $(Agent.Id)
+          #       echo $(Agent.JobName)
+          #       echo $(Agent.JobStatus)
+          #       echo $(Agent.MachineName)
+          #       echo $(Agent.Name)
+          #       echo $(Agent.OS)
+          #       echo $(Agent.OSArchitecture)
+          #       echo $(Agent.RetainDefaultEncoding)
+          #       echo $(Agent.ReadOnlyVariables)
+          #       echo $(Agent.RootDirectory)
+          #       echo $(Agent.TempDirectory)
+          #       echo $(Agent.ToolsDirectory)
+          #       echo $(Agent.Version)
+          #       echo $(Agent.WorkFolder)
+          #       echo $(Build.ArtifactStagingDirectory)
+          #       echo $(Build.BinariesDirectory)
+          #       echo $(Build.DefinitionName)
+          #       echo $(Build.SourceBranch)
+          #       echo $(Build.SourceVersion)
+          #       echo $(Build.SourcesDirectory)
+          #       echo $(Build.StagingDirectory)
+          #       echo $(Common.TestResultsDirectory)
+          #       echo $(Pipeline.Workspace)
+          #       echo $(System.AccessToken)
+          #       echo $(System.ArtifactsDirectory)
+          #       echo $(System.CollectionId)
+          #       echo $(System.Culture)
+          #       echo $(System.DefaultWorkingDirectory)
+          #       echo $(System.DefinitionId)
+          #       echo $(System.EnableAccessToken)
+          #       echo $(System.HostType)
+          #       echo $(System.JobAttempt)
+          #       echo $(System.JobId)
+          #       echo $(System.JobName)
+          #       echo $(System.PhaseAttempt)
+          #       echo $(System.PhaseDisplayName)
+          #       echo $(System.PhaseName)
+          #       echo $(System.ServerType)
+          #       echo $(System.StageAttempt)
+          #       echo $(System.StageName)
+          #       echo $(System.TeamProject)
+          #       echo $(System.TeamProjectId)
+          #       echo $(System.WorkFolder)
+          #       echo $(Task.DisplayName)
+          #       pwd
+          #       ls -lah
+          #       echo 'testing location of template'
+          #       ls -lah /home/vsts/work/1/finishedTemplate/sqsandbox_main.json
+          #       echo 'testing variable Agent.BuildDirectory'
+          #       ls -lah $(Agent.BuildDirectory)
+          #       ls -lah $(Agent.BuildDirectory)/finishedTemplate
+              # inlineScript: 'az deployment group create --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json'
+                # vars="$(RESOURCEGROUPNAME)"
+                # vars2=$(RESOURCEGROUPNAME)
+                # echo $vars
+                # echo $vars2
+                # echo $(RESOURCEGROUPNAME)
+                # echo $(resourceGroupName)

@@ -37,10 +37,11 @@ stages:
         deploy:
           steps:
           - checkout: self
-          - task: AzureResourceGroupDeployment@2
+          - task: AzureResourceManagerTemplateDeployment@3
             inputs:
-              azureSubscription: $(servicePrincipal) 
-              action: 'Create Or Update Resource Group' 
+              deploymentScope: 'Resource Group'
+              azureResourceManagerConnection: $(servicePrincipal) 
+              subscriptionId: $(azureSubscription)
               resourceGroupName: $(resourceGroupName)
               location: $(location)
               templateLocation: 'Linked artifact' 

@@ -37,26 +37,75 @@ stages:
         deploy:
           steps:
           - checkout: self
-          - task: AzureResourceManagerTemplateDeployment@3
-            inputs:
-              deploymentScope: 'Resource Group'
-              azureResourceManagerConnection: $(servicePrincipal) 
-              subscriptionId: $(azureSubscription)
-              resourceGroupName: $(resourceGroupName)
-              location: $(location)
-              templateLocation: 'Linked artifact' 
-              csmFile: '$(Agent.BuildDirectory)/finishedTemplate/sqsandbox_main.json'
-              csmParametersFile: '$(Agent.BuildDirectory)/sqsandbox_vnet.parameters.json'
-              overrideParameters: '-virtualNetworkName $(virtualNetworkName) -location $(location) -user $(user) -team $(team) -project $(project) -ipaddress $(ipaddress)'
-              deploymentMode: 'Complete' 
-            
-          # - task: AzureCLI@2
-          #   displayName: 'deploy bicep template'
+          # - task: AzureResourceManagerTemplateDeployment@3
           #   inputs:
-          #     azureSubscription: $(servicePrincipal) 
-          #     scriptType: 'bash'
-          #     scriptLocation: 'inlineScript'
-          #     inlineScript: 'az deployment group create --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json'
+          #     deploymentScope: 'Resource Group'
+          #     azureResourceManagerConnection: $(servicePrincipal) 
+          #     subscriptionId: $(azureSubscription)
+          #     resourceGroupName: $(resourceGroupName)
+          #     location: $(location)
+          #     templateLocation: 'Linked artifact' 
+          #     csmFile: '$(Agent.BuildDirectory)/finishedTemplate/sqsandbox_main.json'
+          #     csmParametersFile: '$(Agent.BuildDirectory)/sqsandbox_vnet.parameters.json'
+          #     overrideParameters: '-virtualNetworkName $(virtualNetworkName) -location $(location) -user $(user) -team $(team) -project $(project) -ipaddress $(ipaddress)'
+          #     deploymentMode: 'Complete' 
+            
+          - task: AzureCLI@2
+            displayName: 'deploy bicep template'
+            inputs:
+              azureSubscription: $(servicePrincipal) 
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                $(Agent.AcceptTeeEula)
+                $(Agent.BuildDirectory)
+                $(Agent.HomeDirectory)
+                $(Agent.Id)
+                $(Agent.JobName)
+                $(Agent.JobStatus)
+                $(Agent.MachineName)
+                $(Agent.Name)
+                $(Agent.OS)
+                $(Agent.OSArchitecture)
+                $(Agent.RetainDefaultEncoding)
+                $(Agent.ReadOnlyVariables)
+                $(Agent.RootDirectory)
+                $(Agent.TempDirectory)
+                $(Agent.ToolsDirectory)
+                $(Agent.Version)
+                $(Agent.WorkFolder)
+                $(Build.ArtifactStagingDirectory)
+                $(Build.BinariesDirectory)
+                $(Build.DefinitionName)
+                $(Build.SourceBranch)
+                $(Build.SourceVersion)
+                $(Build.SourcesDirectory))
+                $(Build.StagingDirectory))
+                $(Common.TestResultsDirectory))
+                $(Pipeline.Workspace)
+                $(System.AccessToken)
+                $(System.ArtifactsDirectory)
+                $(System.CollectionId)
+                $(System.Culture)
+                $(System.DefaultWorkingDirectory)
+                $(System.DefinitionId)
+                $(System.EnableAccessToken)
+                $(System.HostType)
+                $(System.JobAttempt)
+                $(System.JobId)
+                $(System.JobName)
+                $(System.PhaseAttempt)
+                $(System.PhaseDisplayName)
+                $(System.PhaseName)
+                $(System.ServerType)
+                $(System.StageAttempt)
+                $(System.StageName)
+                $(System.TeamProject)
+                $(System.TeamProjectId)
+                $(System.WorkFolder)
+                $(Task.DisplayName)
+                ls -lah
+              # inlineScript: 'az deployment group create --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/sqsandbox_main.bicep --parameters $(Build.SourcesDirectory)/sqsandbox_vnet.parameters.json'
                 # vars="$(RESOURCEGROUPNAME)"
                 # vars2=$(RESOURCEGROUPNAME)
                 # echo $vars
